@@ -1,8 +1,7 @@
--- Створення бази даних
+
 create database PD422_Triggers;
 use PD422_Triggers;
 
--- Створення таблиць
 create table Students
 (
     StudentID int identity(1,1) primary key,
@@ -51,7 +50,7 @@ create table StudentSubjects
     foreign key (SubjectID) references Subjects(SubjectID)
 );
 
--- Логування студентів
+
 create table StudentsLog
 (
     StudentID int,
@@ -69,9 +68,7 @@ begin
     insert into StudentsLog (StudentID, Name, Surname, Email, AddedAt)
     select StudentID, Name, Surname, Email, GETDATE()
     from inserted;
-end;
-
--- Заборона видалення викладачів
+end
 create trigger trg_PreventTeacherDelete
 on Teachers
 before delete
@@ -84,7 +81,7 @@ begin
     end
 end;
 
--- Автоматичне присвоєння номера телефону "UNKNOWN" для студентів
+
 create trigger trg_SetUnknownPhone
 on Students
 after insert
@@ -95,7 +92,6 @@ begin
     where Phone is null and StudentID in (select StudentID from inserted);
 end;
 
--- Логування змін у назвах груп
 create table GroupsLog
 (
     GroupID int,
@@ -116,7 +112,6 @@ begin
     where d.Name != i.Name;
 end;
 
--- Обмеження на оновлення зарплати викладача
 create trigger trg_CheckSalaryUpdate
 on Teachers
 after update
@@ -129,7 +124,6 @@ begin
     end
 end;
 
--- Автоматичне видалення студента з усіх предметів після видалення
 create trigger trg_DeleteStudentSubjects
 on Students
 after delete
@@ -139,7 +133,6 @@ begin
     where StudentID in (select StudentID from deleted);
 end;
 
--- Автоматичне присвоєння предметів новому викладачеві
 create trigger trg_AssignSubjectToFirstTeacher
 on Teachers
 after insert
@@ -150,13 +143,12 @@ begin
         declare @TeacherID int;
         select @TeacherID = TeacherID from inserted;
 
-        -- Призначення першого предмету новому викладачеві
+        
         insert into TeachersSubjects (TeacherID, SubjectID)
         select @TeacherID, SubjectID from Subjects where SubjectID = 1;
     end
 end;
 
--- Логування видалення предметів
 create table SubjectsLog
 (
     SubjectID int,
@@ -174,7 +166,6 @@ begin
     from deleted;
 end;
 
--- Автоматичне збереження старих email'ів викладачів
 create table EmailChanges
 (
     TeacherID int,
@@ -198,7 +189,6 @@ begin
     end
 end;
 
--- Автоматичне оновлення курсу групи
 create trigger trg_UpdateGroupCourse
 on Groups
 after update
