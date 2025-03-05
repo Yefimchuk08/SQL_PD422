@@ -338,5 +338,12 @@ namespace ConsoleApp3
                     sqlConnection.Close();
                 }
             }
+            void Menu_Zavd2_Task5(string connectionStr)
+            {
+                using (SqlConnection sqlConnection = new SqlConnection(connectionStr))
+                {
+                    sqlConnection.Open();
+                }
+            }
     }
 }
